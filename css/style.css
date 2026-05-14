@@ -1,23 +1,21 @@
 :root {
-  --bg-color: #ffffff;
+  --bg-color: #fafaf8;
   --text-color: #1a1a1a;
   --accent-color: #007aff;
-  --item-bg: #f2f2f7;
-  --panel-bg: #ffffff;
+  --item-bg: #ecece8;
+  --panel-bg: #f7f7f5;
   --border-color: rgba(0, 0, 0, 0.08);
-  --muted: #666;
+  --muted: #5f5f5f;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #000000;
-    --text-color: #ffffff;
-    --accent-color: #0a84ff;
-    --item-bg: #1c1c1e;
-    --panel-bg: #111113;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --muted: #b0b0b0;
-  }
+body.dark-theme {
+  --bg-color: #111113;
+  --text-color: #f2f2f2;
+  --accent-color: #0a84ff;
+  --item-bg: #1d1d20;
+  --panel-bg: #161616;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --muted: #b8b8b8;
 }
 
 * {
@@ -30,10 +28,11 @@ html {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Atkinson Hyperlegible", sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
-  line-height: 1.5;
+  line-height: 1.44;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 button,
@@ -42,9 +41,9 @@ input {
 }
 
 .app-shell {
-  width: min(1200px, calc(100% - 24px));
+  width: min(1200px, calc(100% - 16px));
   margin: 0 auto;
-  padding: 16px 0 32px;
+  padding: 10px 0 20px;
 }
 
 .hidden {
@@ -55,8 +54,8 @@ input {
   position: sticky;
   top: 0;
   z-index: 10;
-  padding: 12px 0 16px;
-  margin-bottom: 12px;
+  padding: 8px 0 12px;
+  margin-bottom: 8px;
   background: linear-gradient(to bottom, var(--bg-color) 75%, transparent);
 }
 
@@ -70,9 +69,9 @@ body.view-hymn .search-panel {
 
 #searchInput {
   width: 100%;
-  min-height: 52px;
-  padding: 14px 52px 14px 16px;
-  border-radius: 14px;
+  min-height: 48px;
+  padding: 10px 44px 10px 12px;
+  border-radius: 12px;
   border: 1px solid var(--border-color);
   background: var(--item-bg);
   color: var(--text-color);
@@ -81,16 +80,15 @@ body.view-hymn .search-panel {
 
 #searchInput:focus {
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 18%, transparent);
 }
 
 .clear-search {
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 8px;
   transform: translateY(-50%);
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border: none;
   border-radius: 50%;
   background: transparent;
@@ -99,15 +97,7 @@ body.view-hymn .search-panel {
   display: none;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
-  line-height: 1;
-}
-
-.clear-search:hover,
-.clear-search:focus-visible {
-  background: var(--border-color);
-  color: var(--text-color);
-  outline: none;
+  font-size: 1.3rem;
 }
 
 .clear-search.visible {
@@ -115,143 +105,145 @@ body.view-hymn .search-panel {
 }
 
 .result-count {
-  margin-top: 8px;
-  font-size: 0.92rem;
+  margin-top: 6px;
+  font-size: 0.88rem;
   color: var(--muted);
 }
 
 .content-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 10px;
   align-items: start;
 }
 
 body.view-hymn .content-grid {
-  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
 }
 
 .panel {
   background: var(--panel-bg);
   border: 1px solid var(--border-color);
-  border-radius: 20px;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
 }
 
 .panel-head {
-  padding: 14px 16px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .panel-head h2 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.98rem;
 }
 
 .hymn-list {
   display: grid;
-  gap: 8px;
-  padding: 12px;
-  max-height: calc(100vh - 200px);
+  gap: 6px;
+  padding: 8px;
+  max-height: calc(100vh - 160px);
   overflow: auto;
 }
 
 .hymn-item {
   width: 100%;
   text-align: left;
-  padding: 14px 14px;
+  padding: 10px 12px;
   border: 1px solid var(--border-color);
-  border-radius: 14px;
+  border-radius: 12px;
   background: var(--item-bg);
   color: var(--text-color);
   cursor: pointer;
 }
 
-.hymn-item:hover,
-.hymn-item:focus-visible {
-  border-color: var(--accent-color);
-  outline: none;
-}
-
 .hymn-item.active {
   border-color: var(--accent-color);
-  box-shadow: inset 0 0 0 1px var(--accent-color);
 }
 
 .hymn-number {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--muted);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .hymn-title {
   display: block;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .hymn-detail {
-  padding: 18px;
+  padding: 10px 8px;
 }
 
 .hymn-detail-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 14px;
-  margin-bottom: 14px;
+  gap: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .hymn-detail h2 {
   margin: 0;
-  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-size: 1.35rem;
 }
 
 .hymn-meta-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .hymn-meta {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 0 10px;
+  min-height: 24px;
+  padding: 0 8px;
   border-radius: 999px;
   background: var(--item-bg);
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
 }
 
-.back-link {
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.back-link,
+.theme-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  padding: 0 12px;
+  min-height: 36px;
+  min-width: 36px;
+  padding: 0 10px;
   border-radius: 999px;
   border: 1px solid var(--border-color);
   color: var(--text-color);
-  text-decoration: none;
   background: var(--item-bg);
-  white-space: nowrap;
+  cursor: pointer;
 }
 
 .hymn-text {
   white-space: pre-wrap;
-  font-size: 1.08rem;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.44;
+  font-weight: 400;
   margin: 0;
 }
 
 .hymn-author {
   display: block;
-  margin-top: 18px;
-  padding-top: 12px;
+  margin-top: 12px;
+  padding-top: 8px;
   border-top: 1px solid var(--border-color);
   text-align: right;
   color: var(--muted);
@@ -277,14 +269,10 @@ body.view-hymn .content-grid {
   }
 
   .hymn-list {
-    max-height: 360px;
+    max-height: 320px;
   }
 
   body.view-hymn #hymnIndexPanel {
     display: none;
-  }
-
-  body.view-hymn #hymnDetailPanel {
-    width: 100%;
   }
 }
