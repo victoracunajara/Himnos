@@ -277,9 +277,37 @@ body.view-hymn .content-grid {
 }
 
 @media (max-width: 920px) {
+  .app-shell {
+    width: min(1200px, calc(100% - 10px));
+    padding: 4px 0 10px;
+  }
+
+  .search-panel {
+    padding: 4px 0 6px;
+    margin-bottom: 4px;
+  }
+
   .content-grid,
   body.view-hymn .content-grid {
     grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .panel-head {
+    padding: 8px 10px;
+  }
+
+  .hymn-list {
+    gap: 3px;
+    padding: 4px;
+  }
+
+  .hymn-item {
+    padding: 7px 9px;
+  }
+
+  .hymn-detail {
+    padding: 6px 3px;
   }
 
   body.view-hymn #hymnIndexPanel {
