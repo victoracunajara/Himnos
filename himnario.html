@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Himnario Digital</title>
+<style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --accent-color: #007aff;
+            --item-bg: #f2f2f7;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --text-color: #ffffff;
+                --accent-color: #0a84ff;
+                --item-bg: #1c1c1e;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            line-height: 1.4;
+        }
+
+        .container {
+            width: 100%;
+            margin: 0;
+        }
+
+        /* Buscador */
+        .search-box {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--bg-color);
+            padding: 10px 0;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--accent-color);
+            background: var(--item-bg);
+            color: var(--text-color);
+            font-size: 18px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        /* Índice */
+        .index-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+        }
+
+        .himno-link {
+            padding: 15px;
+            background: var(--item-bg);
+            text-decoration: none;
+            color: var(--text-color);
+            border-radius: 8px;
+            font-weight: 500;
+            display: block;
+        }
+
+        /* Contenido del Himno */
+        .himno-content {
+            display: none;
+            width: 100%;
+        }
+
+        .himno-content:target {
+            display: block;
+        }
+
+        /* Ocultar buscador e índice si hay un target activo */
+        .himno-content:target ~ .search-box,
+        .himno-content:target ~ .index-section {
+            display: none;
+        }
+
+        h2 { 
+            margin: 10px 0 20px 0; 
+            font-size: 1.8em; 
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+        }
+
+        .letra-himno {
+            white-space: pre-wrap;
+            font-size: 1.25em;
+            margin: 0;
+            column-width: 350px;
+            column-gap: 50px;
+        }
+
+        .autor {
+            display: block;
+            margin-top: 30px;
+            font-style: italic;
+            opacity: 0.8;
+            font-size: 0.9em;
+            text-align: right;
+            border-top: 1px solid var(--item-bg);
+            padding-top: 10px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="himno-content" id="himno2">
+<a class="back-btn" href="#">← Volver al índice</a>
+<h2>Él me amó, por mi se entregó</h2>
+<p class="letra-himno">Él me amó, por mi se entregó;
+¡sublime sacrificio, excelso amor!
+Por esto subirá de mi alma un canto
+de adoración a Cristo el Salvador.
+
+2 Él me amó por mi se entregó
+yo de seguro a Él me entregaré.
+A nadie amaré más que a Cristo,
+sólo para Su gloria viviré.
+
+3 Y cuando junto a multitud brillante
+en Canaán vea a mi Salvador;
+cantaré unido al coro de millares:
+“Él me amó, por mi se entregó”.</p>
+<span class="autor">Fergus Ferguson (1824-1897)</span>
+</div>
+</body>
+</html>
