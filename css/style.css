@@ -142,8 +142,6 @@ body.view-hymn .content-grid {
   display: grid;
   gap: 4px;
   padding: 6px;
-  max-height: calc(100vh - 150px);
-  overflow: auto;
 }
 
 .hymn-item {
@@ -271,14 +269,17 @@ body.view-hymn .content-grid {
   border: 0;
 }
 
+@media (min-width: 921px) {
+  .hymn-list {
+    max-height: calc(100vh - 150px);
+    overflow: auto;
+  }
+}
+
 @media (max-width: 920px) {
   .content-grid,
   body.view-hymn .content-grid {
     grid-template-columns: 1fr;
-  }
-
-  .hymn-list {
-    max-height: 320px;
   }
 
   body.view-hymn #hymnIndexPanel {
