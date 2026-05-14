@@ -57,6 +57,24 @@ function getLongestLine(text) {
     .sort((a, b) => b.length - a.length)[0] || '';
 }
 
+function getMaxFontSize() {
+  const width = window.innerWidth;
+
+  if (width >= 1400) {
+    return 18;
+  }
+
+  if (width >= 900) {
+    return 20;
+  }
+
+  if (width >= 600) {
+    return 24;
+  }
+
+  return 42;
+}
+
 function fitCurrentHymnText() {
   const hymnText = document.querySelector('.hymn-stanzas');
 
@@ -84,7 +102,7 @@ function fitCurrentHymnText() {
   const context = canvas.getContext('2d');
 
   let min = 16;
-  let max = 42;
+  let max = getMaxFontSize();
   let best = 16;
 
   while (min <= max) {
