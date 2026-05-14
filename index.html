@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Himnario Digital</title>
+  <meta name="theme-color" content="#007aff" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Himnario digital</p>
+        <h1>Himnos</h1>
+        <p class="subtitle">Búsqueda, índice y lectura por himno desde JSON.</p>
+      </div>
+      <a class="legacy-link" href="himnario.html">Abrir versión anterior</a>
+    </header>
+
+    <section class="search-panel" aria-label="Búsqueda de himnos">
+      <label class="sr-only" for="searchInput">Buscar himno</label>
+      <input id="searchInput" type="text" placeholder="Buscar palabra, número o título..." autocomplete="off" />
+      <div id="resultCount" class="result-count">Cargando himnos…</div>
+    </section>
+
+    <section class="content-grid">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Índice</h2>
+        </div>
+        <div id="hymnList" class="hymn-list"></div>
+      </section>
+
+      <section class="panel hymn-detail-panel">
+        <div id="hymnDetail" class="hymn-detail empty-state">
+          Selecciona un himno para ver su contenido.
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
