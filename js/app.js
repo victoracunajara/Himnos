@@ -8,6 +8,10 @@ const resultCount = document.getElementById('resultCount');
 let hymns = [];
 let filteredHymns = [];
 
+function getReference(hymn) {
+  return hymn.referencia || hymn.numero || '';
+}
+
 async function loadHymns() {
   try {
     const response = await fetch('data/himnos.json');
@@ -49,13 +53,14 @@ function renderList(items) {
 
   items.forEach(hymn => {
     const button = document.createElement('button');
+    const reference = getReference(hymn);
 
     button.className = 'hymn-item';
     button.type = 'button';
     button.dataset.id = hymn.id;
 
     button.innerHTML = `
-      <span class="hymn-number">Himno ${hymn.numero}</span>
+      <span class="hymn-number">Himno ${reference}</span>
       <span class="hymn-title">${hymn.titulo}</span>
     `;
 
@@ -74,11 +79,13 @@ function renderList(items) {
 function renderHymn(hymn) {
   hymnDetailPanel.classList.remove('hidden');
 
+  const reference = getReference(hymn);
+
   hymnDetail.innerHTML = `
     <div class="hymn-detail-head">
       <div>
         <h2>${hymn.titulo}</h2>
-        <p class="hymn-meta">Himno ${hymn.numero}</p>
+        <p class="hymn-meta">Himno ${reference}</p>
       </div>
 
       <button id="backToIndex" class="back-link" type="button">
@@ -148,10 +155,13 @@ function filterHymns() {
 
   filteredHymns = hymns.filter(hymn => {
     const content = `
-      ${hymn.numero}
+      ${getReference(hymn)}
       ${hymn.titulo}
       ${hymn.letra}
       ${hymn.autor || ''}
+      ${(hymn.categorias || []).join(' ')}
+      ${hymn.tonalidad || ''}
+      ${hymn.tempo ?? ''}
     `.toLowerCase();
 
     return content.includes(value);
