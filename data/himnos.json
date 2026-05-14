@@ -1,0 +1,30 @@
+[
+  {
+    "id": "himno1",
+    "numero": 1,
+    "titulo": "A Dios sea gloria",
+    "autor": "Fanny Jane Crosby (1820-1915)",
+    "letra": "A Dios sea gloria,\npor gran salvación\nSu amor ha mostrado\nen Su Hijo que dio;\nquien por Su gran obra\nredención ganó\ny a vida eterna\ncamino abrió"
+  },
+  {
+    "id": "himno2",
+    "numero": 2,
+    "titulo": "Él me amó, por mi se entregó",
+    "autor": "Fergus Ferguson (1824-1897)",
+    "letra": "Él me amó, por mi se entregó;\n¡sublime sacrificio, excelso amor!\nPor esto subirá de mi alma un canto\nde adoración a Cristo el Salvador."
+  },
+  {
+    "id": "himno3",
+    "numero": 3,
+    "titulo": "Mi pastor sabe mi necesidad",
+    "autor": "El Salterio (1912)",
+    "letra": "Mi pastor sabe mi necesidad\nes Jehová;\nPor quietas aguas Él me guiará;\ndescanso da;"
+  },
+  {
+    "id": "himno4",
+    "numero": 4,
+    "titulo": "Dios quiero deleitarme en Ti",
+    "autor": "John Ryland (1753-1825)",
+    "letra": "Dios quiero deleitarme en Ti\nconfiar en Tu cuidar;\nen dificultad a Ti huir\nmi Amigo sin igual."
+  }
+]
