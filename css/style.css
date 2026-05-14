@@ -210,9 +210,22 @@ body.view-hymn .content-grid {
   font-size: clamp(1.5rem, 2.6vw, 2rem);
 }
 
+.hymn-meta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
 .hymn-meta {
-  margin: 6px 0 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--item-bg);
   color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .back-link {
