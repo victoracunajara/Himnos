@@ -9,6 +9,15 @@ let hymns = [];
 let filteredHymns = [];
 let currentHymn = null;
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 function applyTheme(theme) {
   document.body.classList.toggle('dark-theme', theme === 'dark');
   localStorage.setItem('theme', theme);
@@ -49,7 +58,7 @@ function getLongestLine(text) {
 }
 
 function fitCurrentHymnText() {
-  const hymnText = document.querySelector('.hymn-text');
+  const hymnText = document.querySelector('.hymn-stanzas');
 
   if (!hymnText || !currentHymn) {
     return;
@@ -83,8 +92,7 @@ function fitCurrentHymnText() {
 
     context.font = `${fontWeight} ${size}px ${fontFamily}`;
 
-    const metrics = context.measureText(longestLine);
-    const width = metrics.width;
+    const width = context.measureText(longestLine).width;
 
     if (width <= containerWidth) {
       best = size;
@@ -146,8 +154,8 @@ function renderList(items) {
     button.dataset.id = hymn.id;
 
     button.innerHTML = `
-      <span class="hymn-number">${reference}${categories ? ` · ${categories}` : ''}</span>
-      <span class="hymn-title">${hymn.titulo}</span>
+      <span class="hymn-number">${escapeHtml(reference)}${categories ? ` · ${escapeHtml(categories)}` : ''}</span>
+      <span class="hymn-title">${escapeHtml(hymn.titulo)}</span>
     `;
 
     button.addEventListener('click', () => {
@@ -169,19 +177,26 @@ function renderHymn(hymn) {
 
   const reference = getReference(hymn);
   const categories = (hymn.categorias || [])
-    .map(category => `<span class="hymn-meta">${category}</span>`)
+    .map(category => `<span class="hymn-meta">${escapeHtml(category)}</span>`)
+    .join('');
+
+  const stanzas = hymn.letra
+    .split(/\n\s*\n/)
+    .map(stanza => stanza.trim())
+    .filter(Boolean)
+    .map(stanza => `<div class="hymn-stanza">${escapeHtml(stanza)}</div>`)
     .join('');
 
   hymnDetail.innerHTML = `
     <div class="hymn-detail-head">
       <div>
-        <h2>${hymn.titulo}</h2>
+        <h2>${escapeHtml(hymn.titulo)}</h2>
 
         <div class="hymn-meta-group">
-          ${reference ? `<span class="hymn-meta">${reference}</span>` : ''}
+          ${reference ? `<span class="hymn-meta">${escapeHtml(reference)}</span>` : ''}
           ${categories}
-          ${hymn.tonalidad ? `<span class="hymn-meta">${hymn.tonalidad}</span>` : ''}
-          ${hymn.tempo ? `<span class="hymn-meta">${hymn.tempo} BPM</span>` : ''}
+          ${hymn.tonalidad ? `<span class="hymn-meta">${escapeHtml(hymn.tonalidad)}</span>` : ''}
+          ${hymn.tempo ? `<span class="hymn-meta">${escapeHtml(`${hymn.tempo} BPM`)}</span>` : ''}
         </div>
       </div>
 
@@ -196,9 +211,9 @@ function renderHymn(hymn) {
       </div>
     </div>
 
-    <pre class="hymn-text">${hymn.letra}</pre>
+    <div class="hymn-text hymn-stanzas">${stanzas}</div>
 
-    ${hymn.autor ? `<span class="hymn-author">${hymn.autor}</span>` : ''}
+    ${hymn.autor ? `<span class="hymn-author">${escapeHtml(hymn.autor)}</span>` : ''}
   `;
 
   const backButton = document.getElementById('backToIndex');
