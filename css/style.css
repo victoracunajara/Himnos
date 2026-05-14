@@ -233,12 +233,19 @@ body.view-hymn .content-grid {
 }
 
 .hymn-text {
-  white-space: pre-wrap;
   font-family: inherit;
-  font-size: clamp(1rem, 2.7vw, 1.12rem);
-  line-height: 1.38;
+  font-size: 1rem;
+  line-height: 1.18;
   font-weight: 400;
   margin: 0;
+}
+
+.hymn-stanza {
+  white-space: pre-wrap;
+}
+
+.hymn-stanza + .hymn-stanza {
+  margin-top: 0.72em;
 }
 
 .hymn-author {
