@@ -60,7 +60,7 @@ function renderList(items) {
     button.dataset.id = hymn.id;
 
     button.innerHTML = `
-      <span class="hymn-number">Himno ${reference}</span>
+      <span class="hymn-number">${reference}</span>
       <span class="hymn-title">${hymn.titulo}</span>
     `;
 
