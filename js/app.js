@@ -7,6 +7,7 @@ const resultCount = document.getElementById('resultCount');
 
 let hymns = [];
 let filteredHymns = [];
+let currentHymn = null;
 
 function applyTheme(theme) {
   document.body.classList.toggle('dark-theme', theme === 'dark');
@@ -16,6 +17,8 @@ function applyTheme(theme) {
 function toggleTheme() {
   const darkMode = document.body.classList.contains('dark-theme');
   applyTheme(darkMode ? 'light' : 'dark');
+
+  requestAnimationFrame(fitCurrentHymnText);
 }
 
 function initializeTheme() {
@@ -36,6 +39,62 @@ function getReference(hymn) {
 
 function getCategoriesText(hymn) {
   return (hymn.categorias || []).join(', ');
+}
+
+function getLongestLine(text) {
+  return text
+    .split('\n')
+    .map(line => line.trim())
+    .sort((a, b) => b.length - a.length)[0] || '';
+}
+
+function fitCurrentHymnText() {
+  const hymnText = document.querySelector('.hymn-text');
+
+  if (!hymnText || !currentHymn) {
+    return;
+  }
+
+  const longestLine = getLongestLine(currentHymn.letra);
+
+  if (!longestLine) {
+    return;
+  }
+
+  const containerWidth = hymnText.clientWidth;
+
+  if (!containerWidth) {
+    return;
+  }
+
+  const computed = window.getComputedStyle(hymnText);
+  const fontFamily = computed.fontFamily;
+  const fontWeight = computed.fontWeight;
+
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  let min = 16;
+  let max = 42;
+  let best = 16;
+
+  while (min <= max) {
+    const size = Math.floor((min + max) / 2);
+
+    context.font = `${fontWeight} ${size}px ${fontFamily}`;
+
+    const metrics = context.measureText(longestLine);
+    const width = metrics.width;
+
+    if (width <= containerWidth) {
+      best = size;
+      min = size + 1;
+    } else {
+      max = size - 1;
+    }
+  }
+
+  hymnText.style.fontSize = `${best}px`;
 }
 
 async function loadHymns() {
@@ -104,6 +163,8 @@ function renderList(items) {
 }
 
 function renderHymn(hymn) {
+  currentHymn = hymn;
+
   hymnDetailPanel.classList.remove('hidden');
 
   const reference = getReference(hymn);
@@ -150,6 +211,8 @@ function renderHymn(hymn) {
   if (themeButton) {
     themeButton.addEventListener('click', toggleTheme);
   }
+
+  requestAnimationFrame(fitCurrentHymnText);
 }
 
 function enterHymnView() {
@@ -162,6 +225,8 @@ function enterHymnView() {
 }
 
 function exitHymnView() {
+  currentHymn = null;
+
   document.body.classList.remove('view-hymn');
 
   hymnDetailPanel.classList.add('hidden');
@@ -229,6 +294,14 @@ function clearFilter() {
 
   searchInput.focus();
 }
+
+window.addEventListener('resize', () => {
+  requestAnimationFrame(fitCurrentHymnText);
+});
+
+window.addEventListener('orientationchange', () => {
+  requestAnimationFrame(fitCurrentHymnText);
+});
 
 searchInput.addEventListener('input', filterHymns);
 clearSearch.addEventListener('click', clearFilter);
