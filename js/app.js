@@ -12,6 +12,10 @@ function getReference(hymn) {
   return hymn.referencia || hymn.numero || '';
 }
 
+function getCategoriesText(hymn) {
+  return (hymn.categorias || []).join(', ');
+}
+
 async function loadHymns() {
   try {
     const response = await fetch('data/himnos.json');
@@ -54,13 +58,14 @@ function renderList(items) {
   items.forEach(hymn => {
     const button = document.createElement('button');
     const reference = getReference(hymn);
+    const categories = getCategoriesText(hymn);
 
     button.className = 'hymn-item';
     button.type = 'button';
     button.dataset.id = hymn.id;
 
     button.innerHTML = `
-      <span class="hymn-number">${reference} ${categories}</span>
+      <span class="hymn-number">${reference}${categories ? ` · ${categories}` : ''}</span>
       <span class="hymn-title">${hymn.titulo}</span>
     `;
 
@@ -80,7 +85,6 @@ function renderHymn(hymn) {
   hymnDetailPanel.classList.remove('hidden');
 
   const reference = getReference(hymn);
-
   const categories = (hymn.categorias || [])
     .map(category => `<span class="hymn-meta">${category}</span>`)
     .join('');
