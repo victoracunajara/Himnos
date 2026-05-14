@@ -8,6 +8,28 @@ const resultCount = document.getElementById('resultCount');
 let hymns = [];
 let filteredHymns = [];
 
+function applyTheme(theme) {
+  document.body.classList.toggle('dark-theme', theme === 'dark');
+  localStorage.setItem('theme', theme);
+}
+
+function toggleTheme() {
+  const darkMode = document.body.classList.contains('dark-theme');
+  applyTheme(darkMode ? 'light' : 'dark');
+}
+
+function initializeTheme() {
+  const savedTheme = localStorage.getItem('theme');
+
+  if (savedTheme) {
+    applyTheme(savedTheme);
+    return;
+  }
+
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(prefersDark ? 'dark' : 'light');
+}
+
 function getReference(hymn) {
   return hymn.referencia || hymn.numero || '';
 }
@@ -102,9 +124,15 @@ function renderHymn(hymn) {
         </div>
       </div>
 
-      <button id="backToIndex" class="back-link" type="button">
-        Volver
-      </button>
+      <div class="header-actions">
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema">
+          ◐
+        </button>
+
+        <button id="backToIndex" class="back-link" type="button">
+          Volver
+        </button>
+      </div>
     </div>
 
     <pre class="hymn-text">${hymn.letra}</pre>
@@ -113,9 +141,14 @@ function renderHymn(hymn) {
   `;
 
   const backButton = document.getElementById('backToIndex');
+  const themeButton = document.getElementById('themeToggle');
 
   if (backButton) {
     backButton.addEventListener('click', exitHymnView);
+  }
+
+  if (themeButton) {
+    themeButton.addEventListener('click', toggleTheme);
   }
 }
 
@@ -200,4 +233,5 @@ function clearFilter() {
 searchInput.addEventListener('input', filterHymns);
 clearSearch.addEventListener('click', clearFilter);
 
+initializeTheme();
 loadHymns();
