@@ -1,0 +1,276 @@
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1a1a1a;
+  --accent-color: #007aff;
+  --item-bg: #f2f2f7;
+  --panel-bg: #ffffff;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --muted: #666;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #000000;
+    --text-color: #ffffff;
+    --accent-color: #0a84ff;
+    --item-bg: #1c1c1e;
+    --panel-bg: #111113;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --muted: #b0b0b0;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1200px, calc(100% - 24px));
+  margin: 0 auto;
+  padding: 16px 0 32px;
+}
+
+.app-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.legacy-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  text-decoration: none;
+  background: var(--panel-bg);
+  white-space: nowrap;
+}
+
+.search-panel {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px 0 16px;
+  margin-bottom: 12px;
+  background: linear-gradient(to bottom, var(--bg-color) 75%, transparent);
+}
+
+#searchInput {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  background: var(--item-bg);
+  color: var(--text-color);
+  outline: none;
+}
+
+#searchInput:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 18%, transparent);
+}
+
+.result-count {
+  margin-top: 8px;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.panel-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.panel-head h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.hymn-list {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  max-height: calc(100vh - 200px);
+  overflow: auto;
+}
+
+.hymn-item {
+  width: 100%;
+  text-align: left;
+  padding: 14px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--item-bg);
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.hymn-item:hover,
+.hymn-item:focus-visible {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+.hymn-item.active {
+  border-color: var(--accent-color);
+  box-shadow: inset 0 0 0 1px var(--accent-color);
+}
+
+.hymn-number {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.hymn-title {
+  display: block;
+  font-weight: 600;
+}
+
+.hymn-detail {
+  padding: 18px;
+}
+
+.empty-state {
+  color: var(--muted);
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hymn-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hymn-detail h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+}
+
+.hymn-meta {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  text-decoration: none;
+  background: var(--item-bg);
+  white-space: nowrap;
+}
+
+.hymn-text {
+  white-space: pre-wrap;
+  font-size: 1.08rem;
+  margin: 0;
+}
+
+.hymn-author {
+  display: block;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+  text-align: right;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 920px) {
+  .app-header,
+  .hymn-detail-head {
+    flex-direction: column;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hymn-list {
+    max-height: 360px;
+  }
+}
