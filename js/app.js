@@ -60,7 +60,7 @@ function renderList(items) {
     button.dataset.id = hymn.id;
 
     button.innerHTML = `
-      <span class="hymn-number">${reference}</span>
+      <span class="hymn-number">${reference} ${categories}</span>
       <span class="hymn-title">${hymn.titulo}</span>
     `;
 
@@ -91,7 +91,7 @@ function renderHymn(hymn) {
         <h2>${hymn.titulo}</h2>
 
         <div class="hymn-meta-group">
-          ${reference ? `<span class="hymn-meta">Himno ${reference}</span>` : ''}
+          ${reference ? `<span class="hymn-meta">${reference}</span>` : ''}
           ${categories}
           ${hymn.tonalidad ? `<span class="hymn-meta">${hymn.tonalidad}</span>` : ''}
           ${hymn.tempo ? `<span class="hymn-meta">${hymn.tempo} BPM</span>` : ''}
