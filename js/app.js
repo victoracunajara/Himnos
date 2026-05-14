@@ -29,6 +29,7 @@ async function loadHymns() {
 
       if (hymn) {
         renderHymn(hymn);
+        enterHymnView();
       }
     }
   } catch (error) {
@@ -58,6 +59,8 @@ function renderList(items) {
     button.addEventListener('click', () => {
       renderHymn(hymn);
       setActive(button);
+      enterHymnView();
+
       history.replaceState(null, '', `#${hymn.id}`);
     });
 
@@ -75,13 +78,41 @@ function renderHymn(hymn) {
         <p class="hymn-meta">Himno ${hymn.numero}</p>
       </div>
 
-      <a class="back-link" href="#top">Volver</a>
+      <button id="backToIndex" class="back-link" type="button">
+        Volver
+      </button>
     </div>
 
     <pre class="hymn-text">${hymn.letra}</pre>
 
     ${hymn.autor ? `<span class="hymn-author">${hymn.autor}</span>` : ''}
   `;
+
+  const backButton = document.getElementById('backToIndex');
+
+  if (backButton) {
+    backButton.addEventListener('click', exitHymnView);
+  }
+}
+
+function enterHymnView() {
+  document.body.classList.add('view-hymn');
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+function exitHymnView() {
+  document.body.classList.remove('view-hymn');
+
+  history.replaceState(null, '', ' ');
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 }
 
 function setActive(activeButton) {
