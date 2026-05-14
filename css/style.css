@@ -117,6 +117,8 @@ body.view-hymn .content-grid {
 
 .index-head {
   display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
   gap: 8px;
 }
 
@@ -129,10 +131,11 @@ body.view-hymn .content-grid {
 .index-head-top h2 {
   margin: 0;
   font-size: 0.92rem;
+  white-space: nowrap;
 }
 
 .index-search-wrapper {
-  flex: 1;
+  min-width: 0;
 }
 
 .hymn-list {
