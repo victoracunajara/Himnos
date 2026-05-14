@@ -13,26 +13,27 @@
 </head>
 <body>
   <main class="app-shell">
-
-    <section id="searchPanel" class="search-panel" aria-label="Búsqueda de himnos">
-      <label class="sr-only" for="searchInput">Buscar himno</label>
-
-      <div class="search-wrapper">
-        <input id="searchInput" type="text" placeholder="Buscar palabra, número o título..." autocomplete="off" inputmode="search" />
-
-        <button id="clearSearch" class="clear-search" type="button" aria-label="Limpiar búsqueda">
-          ×
-        </button>
-      </div>
-
-      <div id="resultCount" class="result-count">Cargando himnos…</div>
-    </section>
-
     <section class="content-grid">
-      <section id="hymnIndexPanel" class="panel">
-        <div class="panel-head">
-          <h2>Índice</h2>
+      <section id="hymnIndexPanel" class="panel hymn-index-panel">
+        <div class="panel-head index-head">
+          <div class="index-head-top">
+            <h2>Índice</h2>
+
+            <button id="themeToggleIndex" class="theme-toggle index-theme-toggle" type="button" aria-label="Cambiar tema">
+              ◐
+            </button>
+          </div>
+
+          <div class="search-wrapper index-search-wrapper">
+            <label class="sr-only" for="searchInput">Buscar himno</label>
+            <input id="searchInput" type="text" placeholder="Buscar palabra, número o título..." autocomplete="off" inputmode="search" />
+
+            <button id="clearSearch" class="clear-search" type="button" aria-label="Limpiar búsqueda">
+              ×
+            </button>
+          </div>
         </div>
+
         <div id="hymnList" class="hymn-list"></div>
       </section>
 
