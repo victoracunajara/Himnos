@@ -11,7 +11,7 @@
 <body>
   <main class="app-shell">
 
-    <section class="search-panel" aria-label="Búsqueda de himnos">
+    <section id="searchPanel" class="search-panel" aria-label="Búsqueda de himnos">
       <label class="sr-only" for="searchInput">Buscar himno</label>
 
       <div class="search-wrapper">
@@ -26,14 +26,14 @@
     </section>
 
     <section class="content-grid">
-      <section class="panel">
+      <section id="hymnIndexPanel" class="panel">
         <div class="panel-head">
           <h2>Índice</h2>
         </div>
         <div id="hymnList" class="hymn-list"></div>
       </section>
 
-      <section class="panel hymn-detail-panel">
+      <section id="hymnDetailPanel" class="panel hymn-detail-panel">
         <div id="hymnDetail" class="hymn-detail empty-state">
           Selecciona un himno para ver su contenido.
         </div>
