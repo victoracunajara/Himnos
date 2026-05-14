@@ -13,7 +13,15 @@
 
     <section class="search-panel" aria-label="Búsqueda de himnos">
       <label class="sr-only" for="searchInput">Buscar himno</label>
-      <input id="searchInput" type="text" placeholder="Buscar palabra, número o título..." autocomplete="off" />
+
+      <div class="search-wrapper">
+        <input id="searchInput" type="search" placeholder="Buscar palabra, número o título..." autocomplete="off" />
+
+        <button id="clearSearch" class="clear-search" type="button" aria-label="Limpiar búsqueda">
+          ×
+        </button>
+      </div>
+
       <div id="resultCount" class="result-count">Cargando himnos…</div>
     </section>
 
