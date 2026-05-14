@@ -81,11 +81,21 @@ function renderHymn(hymn) {
 
   const reference = getReference(hymn);
 
+  const categories = (hymn.categorias || [])
+    .map(category => `<span class="hymn-meta">${category}</span>`)
+    .join('');
+
   hymnDetail.innerHTML = `
     <div class="hymn-detail-head">
       <div>
         <h2>${hymn.titulo}</h2>
-        <p class="hymn-meta">Himno ${reference}</p>
+
+        <div class="hymn-meta-group">
+          ${reference ? `<span class="hymn-meta">Himno ${reference}</span>` : ''}
+          ${categories}
+          ${hymn.tonalidad ? `<span class="hymn-meta">${hymn.tonalidad}</span>` : ''}
+          ${hymn.tempo ? `<span class="hymn-meta">${hymn.tempo} BPM</span>` : ''}
+        </div>
       </div>
 
       <button id="backToIndex" class="back-link" type="button">
