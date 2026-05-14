@@ -47,6 +47,10 @@ input {
   padding: 16px 0 32px;
 }
 
+.hidden {
+  display: none;
+}
+
 .search-panel {
   position: sticky;
   top: 0;
@@ -185,15 +189,6 @@ body.view-hymn .search-panel {
 
 .hymn-detail {
   padding: 18px;
-}
-
-.empty-state {
-  color: var(--muted);
-  min-height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
 }
 
 .hymn-detail-head {
