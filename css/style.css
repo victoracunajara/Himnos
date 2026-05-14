@@ -235,7 +235,7 @@ body.view-hymn .content-grid {
 .hymn-text {
   white-space: pre-wrap;
   font-family: inherit;
-  font-size: clamp(1rem, 2.7vw, 1.12rem);
+  font-size: 1rem;
   line-height: 1.38;
   font-weight: 400;
   margin: 0;
