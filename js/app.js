@@ -3,7 +3,7 @@ const hymnDetail = document.getElementById('hymnDetail');
 const hymnDetailPanel = document.getElementById('hymnDetailPanel');
 const searchInput = document.getElementById('searchInput');
 const clearSearch = document.getElementById('clearSearch');
-const resultCount = document.getElementById('resultCount');
+const themeToggleIndex = document.getElementById('themeToggleIndex');
 
 let hymns = [];
 let filteredHymns = [];
@@ -135,7 +135,6 @@ async function loadHymns() {
     filteredHymns = hymns;
 
     renderList(filteredHymns);
-    updateCount(filteredHymns.length);
     updateClearButton();
 
     const hash = window.location.hash.replace('#', '');
@@ -285,10 +284,6 @@ function setActive(activeButton) {
   activeButton.classList.add('active');
 }
 
-function updateCount(total) {
-  resultCount.textContent = `${total} himnos encontrados`;
-}
-
 function updateClearButton() {
   const hasValue = searchInput.value.trim().length > 0;
 
@@ -313,7 +308,6 @@ function filterHymns() {
   });
 
   renderList(filteredHymns);
-  updateCount(filteredHymns.length);
   updateClearButton();
 }
 
@@ -322,7 +316,6 @@ function clearFilter() {
   filteredHymns = hymns;
 
   renderList(filteredHymns);
-  updateCount(filteredHymns.length);
   updateClearButton();
 
   searchInput.focus();
@@ -338,6 +331,8 @@ window.addEventListener('orientationchange', () => {
 
 searchInput.addEventListener('input', filterHymns);
 clearSearch.addEventListener('click', clearFilter);
+
+themeToggleIndex.addEventListener('click', toggleTheme);
 
 initializeTheme();
 loadHymns();
