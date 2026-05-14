@@ -56,6 +56,10 @@ input {
   background: linear-gradient(to bottom, var(--bg-color) 75%, transparent);
 }
 
+body.view-hymn .search-panel {
+  display: none;
+}
+
 .search-wrapper {
   position: relative;
 }
@@ -261,5 +265,13 @@ input {
 
   .hymn-list {
     max-height: 360px;
+  }
+
+  body.view-hymn #hymnIndexPanel {
+    display: none;
+  }
+
+  body.view-hymn #hymnDetailPanel {
+    width: 100%;
   }
 }
