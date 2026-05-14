@@ -50,26 +50,14 @@ input {
   display: none;
 }
 
-.search-panel {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  padding: 6px 0 8px;
-  margin-bottom: 6px;
-  background: linear-gradient(to bottom, var(--bg-color) 75%, transparent);
-}
-
-body.view-hymn .search-panel {
-  display: none;
-}
-
 .search-wrapper {
   position: relative;
 }
 
+#indexSearch,
 #searchInput {
   width: 100%;
-  min-height: 46px;
+  min-height: 40px;
   padding: 8px 42px 8px 10px;
   border-radius: 10px;
   border: 1px solid var(--border-color);
@@ -104,12 +92,6 @@ body.view-hymn .search-panel {
   display: flex;
 }
 
-.result-count {
-  margin-top: 4px;
-  font-size: 0.84rem;
-  color: var(--muted);
-}
-
 .content-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -133,9 +115,24 @@ body.view-hymn .content-grid {
   border-bottom: 1px solid var(--border-color);
 }
 
-.panel-head h2 {
+.index-head {
+  display: grid;
+  gap: 8px;
+}
+
+.index-head-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.index-head-top h2 {
   margin: 0;
   font-size: 0.92rem;
+}
+
+.index-search-wrapper {
+  flex: 1;
 }
 
 .hymn-list {
@@ -230,6 +227,10 @@ body.view-hymn .content-grid {
   font-size: 0.9rem;
 }
 
+.index-theme-toggle {
+  flex-shrink: 0;
+}
+
 .hymn-text {
   font-family: inherit;
   font-size: 1rem;
@@ -280,11 +281,6 @@ body.view-hymn .content-grid {
   .app-shell {
     width: min(1200px, calc(100% - 10px));
     padding: 4px 0 10px;
-  }
-
-  .search-panel {
-    padding: 4px 0 6px;
-    margin-bottom: 4px;
   }
 
   .content-grid,
