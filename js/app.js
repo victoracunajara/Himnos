@@ -1,5 +1,6 @@
 const hymnList = document.getElementById('hymnList');
 const hymnDetail = document.getElementById('hymnDetail');
+const hymnDetailPanel = document.getElementById('hymnDetailPanel');
 const searchInput = document.getElementById('searchInput');
 const clearSearch = document.getElementById('clearSearch');
 const resultCount = document.getElementById('resultCount');
@@ -33,8 +34,10 @@ async function loadHymns() {
       }
     }
   } catch (error) {
+    hymnDetailPanel.classList.remove('hidden');
+
     hymnDetail.innerHTML = `
-      <div class="empty-state">
+      <div>
         Error cargando himnos: ${error.message}
       </div>
     `;
@@ -69,7 +72,7 @@ function renderList(items) {
 }
 
 function renderHymn(hymn) {
-  hymnDetail.classList.remove('empty-state');
+  hymnDetailPanel.classList.remove('hidden');
 
   hymnDetail.innerHTML = `
     <div class="hymn-detail-head">
@@ -106,6 +109,13 @@ function enterHymnView() {
 
 function exitHymnView() {
   document.body.classList.remove('view-hymn');
+
+  hymnDetailPanel.classList.add('hidden');
+  hymnDetail.innerHTML = '';
+
+  document.querySelectorAll('.hymn-item').forEach(button => {
+    button.classList.remove('active');
+  });
 
   history.replaceState(null, '', ' ');
 
