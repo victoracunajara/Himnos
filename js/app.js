@@ -5,6 +5,10 @@ const searchInput = document.getElementById('searchInput');
 const clearSearch = document.getElementById('clearSearch');
 const themeToggleIndex = document.getElementById('themeToggleIndex');
 
+const TODAY_HYMNS_KEY = 'todayHymns';
+const todayHymnsSection = document.getElementById('todayHymnsSection');
+const todayHymnsList = document.getElementById('todayHymnsList');
+
 let hymns = [];
 let filteredHymns = [];
 let currentHymn = null;
@@ -55,6 +59,38 @@ function getLongestLine(text) {
     .split('\n')
     .map(line => line.trim())
     .sort((a, b) => b.length - a.length)[0] || '';
+}
+
+function getTodayHymns() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(TODAY_HYMNS_KEY));
+
+    return Array.isArray(stored) ? stored : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveTodayHymns(ids) {
+  localStorage.setItem(TODAY_HYMNS_KEY, JSON.stringify(ids));
+}
+
+function isTodayHymn(id) {
+  return getTodayHymns().includes(id);
+}
+
+function toggleTodayHymn(id) {
+  const ids = getTodayHymns();
+  const exists = ids.includes(id);
+
+  const nextIds = exists
+    ? ids.filter(item => item !== id)
+    : [id, ...ids.filter(item => item !== id)].slice(0, 12);
+
+  saveTodayHymns(nextIds);
+
+  renderTodayHymns();
+  renderList(filteredHymns);
 }
 
 function getMaxFontSize() {
@@ -136,6 +172,7 @@ async function loadHymns() {
 
     renderList(filteredHymns);
     updateClearButton();
+    renderTodayHymns();
 
     const hash = window.location.hash.replace('#', '');
 
@@ -171,9 +208,30 @@ function renderList(items) {
     button.dataset.id = hymn.id;
 
     button.innerHTML = `
-      <span class="hymn-number">${escapeHtml(reference)}${categories ? ` · ${escapeHtml(categories)}` : ''}</span>
-      <span class="hymn-title">${escapeHtml(hymn.titulo)}</span>
+      <div class="hymn-item-main">
+        <span class="hymn-number">${escapeHtml(reference)}${categories ? ` · ${escapeHtml(categories)}` : ''}</span>
+        <span class="hymn-title">${escapeHtml(hymn.titulo)}</span>
+      </div>
+
+      <button
+        class="today-toggle ${isTodayHymn(hymn.id) ? 'active' : ''}"
+        type="button"
+        data-today-toggle="${hymn.id}"
+        aria-label="Agregar a Himnos de Hoy"
+      >
+        ${isTodayHymn(hymn.id) ? '★' : '☆'}
+      </button>
     `;
+
+    const todayToggle = button.querySelector('[data-today-toggle]');
+
+    if (todayToggle) {
+      todayToggle.addEventListener('click', event => {
+        event.stopPropagation();
+
+        toggleTodayHymn(hymn.id);
+      });
+    }
 
     button.addEventListener('click', () => {
       renderHymn(hymn);
@@ -184,6 +242,70 @@ function renderList(items) {
     });
 
     hymnList.appendChild(button);
+  });
+}
+
+function renderTodayHymns() {
+  const ids = getTodayHymns();
+
+  if (!ids.length) {
+    todayHymnsSection.classList.add('hidden');
+    todayHymnsList.innerHTML = '';
+
+    return;
+  }
+
+  const selected = ids
+    .map(id => hymns.find(hymn => hymn.id === id))
+    .filter(Boolean);
+
+  todayHymnsSection.classList.remove('hidden');
+  todayHymnsList.innerHTML = '';
+
+  selected.forEach(hymn => {
+    const button = document.createElement('button');
+    const reference = getReference(hymn);
+    const categories = getCategoriesText(hymn);
+
+    button.className = 'hymn-item';
+    button.type = 'button';
+    button.dataset.id = hymn.id;
+
+    button.innerHTML = `
+      <div class="hymn-item-main">
+        <span class="hymn-number">${escapeHtml(reference)}${categories ? ` · ${escapeHtml(categories)}` : ''}</span>
+        <span class="hymn-title">${escapeHtml(hymn.titulo)}</span>
+      </div>
+
+      <button
+        class="today-toggle active"
+        type="button"
+        data-today-toggle="${hymn.id}"
+        aria-label="Quitar de Himnos de Hoy"
+      >
+        ★
+      </button>
+    `;
+
+    const todayToggle = button.querySelector('[data-today-toggle]');
+
+    if (todayToggle) {
+      todayToggle.addEventListener('click', event => {
+        event.stopPropagation();
+
+        toggleTodayHymn(hymn.id);
+      });
+    }
+
+    button.addEventListener('click', () => {
+      renderHymn(hymn);
+      setActive(button);
+      enterHymnView();
+
+      history.replaceState(null, '', `#${hymn.id}`);
+    });
+
+    todayHymnsList.appendChild(button);
   });
 }
 
@@ -309,6 +431,7 @@ function filterHymns() {
 
   renderList(filteredHymns);
   updateClearButton();
+  renderTodayHymns();
 }
 
 function clearFilter() {
@@ -317,6 +440,7 @@ function clearFilter() {
 
   renderList(filteredHymns);
   updateClearButton();
+  renderTodayHymns();
 
   searchInput.focus();
 }

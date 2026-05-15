@@ -6,6 +6,7 @@
   --panel-bg: #f7f7f5;
   --border-color: rgba(0, 0, 0, 0.08);
   --muted: #5f5f5f;
+  --today-color: #8c7a3f;
 }
 
 body.dark-theme {
@@ -16,6 +17,7 @@ body.dark-theme {
   --panel-bg: #161616;
   --border-color: rgba(255, 255, 255, 0.08);
   --muted: #b8b8b8;
+  --today-color: #b7a15a;
 }
 
 * {
@@ -144,6 +146,29 @@ body.view-hymn .content-grid {
   padding: 6px;
 }
 
+.today-hymns {
+  margin-bottom: 2px;
+}
+
+.today-hymns.hidden {
+  display: none;
+}
+
+.today-hymns-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px 4px;
+}
+
+.today-hymns-head h3 {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
 .hymn-item {
   width: 100%;
   text-align: left;
@@ -153,6 +178,38 @@ body.view-hymn .content-grid {
   background: var(--item-bg);
   color: var(--text-color);
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.hymn-item-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.today-toggle {
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.45;
+}
+
+.today-toggle:hover {
+  opacity: 0.9;
+}
+
+.today-toggle.active {
+  opacity: 1;
+  color: var(--today-color);
 }
 
 .hymn-item.active {
