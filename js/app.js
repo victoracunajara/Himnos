@@ -161,13 +161,26 @@ function fitCurrentHymnText() {
 
 async function loadHymns() {
   try {
-    const response = await fetch('data/himnos.json');
+    const indexResponse = await fetch('data/index.json');
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+    if (!indexResponse.ok) {
+      throw new Error(`HTTP ${indexResponse.status}`);
     }
 
-    hymns = await response.json();
+    const files = await indexResponse.json();
+
+    hymns = await Promise.all(
+      files.map(async file => {
+        const response = await fetch(`data/himnos/${file}`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        return response.json();
+      })
+    );
+
     filteredHymns = hymns;
 
     renderList(filteredHymns);
