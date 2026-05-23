@@ -84,25 +84,6 @@ if (!is_array($data)) {
     fail('Invalid JSON');
 }
 
-$required = [
-    'titulo',
-    'autor',
-    'tonalidad',
-    'tempo',
-    'categorias',
-    'letra'
-];
-
-foreach ($required as $field) {
-    if (!array_key_exists($field, $data)) {
-        fail("Missing field: {$field}");
-    }
-}
-
-if (!is_array($data['categorias'])) {
-    fail('categorias must be array');
-}
-
 $lock = fopen(LOCK_FILE, 'c');
 
 if (!$lock) {
@@ -125,9 +106,124 @@ if (!is_array($index)) {
     fail('Invalid index.json', 500, $lock);
 }
 
+if (($data['action'] ?? '') === 'delete') {
+
+    $targetId = trim((string)($data['id'] ?? ''));
+
+    if ($targetId === '') {
+        fail('Missing id', 400, $lock);
+    }
+
+    $foundFile = null;
+
+    foreach ($index as $file) {
+
+        $path = HYMNS_DIR . '/' . $file;
+
+        if (!file_exists($path)) {
+            continue;
+        }
+
+        $content = file_get_contents($path);
+
+        if ($content === false) {
+            continue;
+        }
+
+        $json = json_decode($content, true);
+
+        if (!is_array($json)) {
+            continue;
+        }
+
+        if (($json['id'] ?? '') === $targetId) {
+            $foundFile = $file;
+            break;
+        }
+    }
+
+    if (!$foundFile) {
+        fail('Hymn not found', 404, $lock);
+    }
+
+    $targetPath = HYMNS_DIR . '/' . $foundFile;
+
+    if (!unlink($targetPath)) {
+        fail('Cannot delete hymn', 500, $lock);
+    }
+
+    $index = array_values(
+        array_filter(
+            $index,
+            fn($v) => $v !== $foundFile
+        )
+    );
+
+    $indexJson = json_encode(
+        $index,
+        JSON_PRETTY_PRINT |
+        JSON_UNESCAPED_UNICODE |
+        JSON_UNESCAPED_SLASHES
+    );
+
+    if ($indexJson === false) {
+        fail('Cannot encode index', 500, $lock);
+    }
+
+    $result = file_put_contents(
+        INDEX_FILE,
+        $indexJson . PHP_EOL,
+        LOCK_EX
+    );
+
+    if ($result === false) {
+        fail('Cannot write index', 500, $lock);
+    }
+
+    $commands = [
+        'git -C ' . escapeshellarg(BASE_DIR) . ' add -A',
+        'git -C ' . escapeshellarg(BASE_DIR) . ' commit -m ' . escapeshellarg("Eliminar {$targetId}"),
+        'git -C ' . escapeshellarg(BASE_DIR) . ' push origin main'
+    ];
+
+    foreach ($commands as $cmd) {
+
+        $result = run($cmd);
+
+        if ($result['code'] !== 0) {
+            fail('Git operation failed', 500, $lock);
+        }
+    }
+
+    ok([
+        'deleted' => $targetId,
+        'archivo' => $foundFile
+    ], $lock);
+}
+
+$required = [
+    'titulo',
+    'autor',
+    'tonalidad',
+    'tempo',
+    'categorias',
+    'letra'
+];
+
+foreach ($required as $field) {
+    if (!array_key_exists($field, $data)) {
+        fail("Missing field: {$field}");
+    }
+}
+
+if (!is_array($data['categorias'])) {
+    fail('categorias must be array');
+}
+
 $numbers = [];
 
 foreach ($index as $file) {
+
     if (
         is_string($file) &&
         preg_match('/^(\d+)\.json$/', $file, $m)
@@ -146,7 +242,7 @@ $filename = $padded . '.json';
 
 $hymn = [
     'id' => 'himno' . $padded,
-    'referencia' => (string)$next,
+    'referencia' => trim((string)($data['referencia'] ?? (string)$next)),
     'titulo' => trim((string)$data['titulo']),
     'autor' => trim((string)$data['autor']),
     'tonalidad' => trim((string)$data['tonalidad']),
@@ -217,19 +313,16 @@ $commands = [
 ];
 
 foreach ($commands as $cmd) {
+
     $result = run($cmd);
 
     if ($result['code'] !== 0) {
-        fail(
-            'Git operation failed',
-            500,
-            $lock
-        );
+        fail('Git operation failed', 500, $lock);
     }
 }
 
 ok([
     'archivo' => $filename,
     'id' => $hymn['id'],
-    'referencia' => (string)$next
+    'referencia' => $hymn['referencia']
 ], $lock);
