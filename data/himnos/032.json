@@ -1,0 +1,12 @@
+{
+    "id": "himno032",
+    "referencia": "32",
+    "titulo": "Test final",
+    "autor": "Victor",
+    "tonalidad": "G",
+    "tempo": 80,
+    "categorias": [
+        "test"
+    ],
+    "letra": "API OK"
+}
