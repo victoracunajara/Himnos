@@ -1,0 +1,12 @@
+{
+    "id": "himno031",
+    "referencia": "31",
+    "titulo": "Prueba API",
+    "autor": "Victor",
+    "tonalidad": "C",
+    "tempo": 90,
+    "categorias": [
+        "prueba"
+    ],
+    "letra": "Texto prueba"
+}
