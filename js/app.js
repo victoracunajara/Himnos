@@ -160,41 +160,79 @@ function fitCurrentHymnText() {
 }
 
 async function loadHymns() {
+
+  const cacheBust = `v=${Date.now()}`;
+
   try {
-    const indexResponse = await fetch('data/index.json');
+
+    const indexResponse = await fetch(
+      `data/index.json?${cacheBust}`,
+      {
+        cache: 'no-store'
+      }
+    );
+
     if (!indexResponse.ok) {
       throw new Error(`HTTP ${indexResponse.status}`);
     }
+
     const files = await indexResponse.json();
+
     const loadedHymns = [];
     const failedFiles = [];
+
     for (const file of files) {
+
       try {
-        const response = await fetch(`data/himnos/${file}`);
+
+        const response = await fetch(
+          `data/himnos/${file}?${cacheBust}`,
+          {
+            cache: 'no-store'
+          }
+        );
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }
+
         const hymn = await response.json();
+
         loadedHymns.push(hymn);
+
       } catch (err) {
+
         failedFiles.push(file);
       }
     }
+
     hymns = loadedHymns;
     filteredHymns = hymns;
+
     renderList(filteredHymns);
+
     updateClearButton();
+
     renderTodayHymns();
+
     const hash = window.location.hash.replace('#', '');
+
     if (hash) {
+
       const hymn = hymns.find(item => item.id === hash);
+
       if (hymn) {
+
         renderHymn(hymn);
+
         enterHymnView();
       }
     }
+
     if (failedFiles.length > 0) {
+
       hymnDetailPanel.classList.remove('hidden');
+
       hymnDetail.innerHTML = `
         <div style="color: red;">
           Error cargando los siguientes himnos:<br>
@@ -202,8 +240,11 @@ async function loadHymns() {
         </div>
       `;
     }
+
   } catch (error) {
+
     hymnDetailPanel.classList.remove('hidden');
+
     hymnDetail.innerHTML = `
       <div>
         Error cargando himnos: ${error.message}
