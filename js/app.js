@@ -178,10 +178,9 @@ async function loadHymns() {
 
     const files = await indexResponse.json();
 
-    const loadedHymns = [];
     const failedFiles = [];
 
-    for (const file of files) {
+    const hymnPromises = files.map(async file => {
 
       try {
 
@@ -196,15 +195,18 @@ async function loadHymns() {
           throw new Error(`HTTP ${response.status}`);
         }
 
-        const hymn = await response.json();
-
-        loadedHymns.push(hymn);
+        return await response.json();
 
       } catch (err) {
 
         failedFiles.push(file);
+
+        return null;
       }
-    }
+    });
+
+    const loadedHymns = (await Promise.all(hymnPromises))
+      .filter(Boolean);
 
     hymns = loadedHymns;
     filteredHymns = hymns;
