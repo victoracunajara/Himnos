@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Himnario</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 2rem;
+            font-family: system-ui, sans-serif;
+            background: #f5f5f5;
+            color: #222;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+        }
+
+        .section + .section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #ddd;
+        }
+
+        label {
+            display: block;
+            margin-bottom: .5rem;
+            font-weight: 600;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: .75rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font: inherit;
+        }
+
+        #token {
+            margin-bottom: 1.5rem;
+        }
+
+        .json-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: .5rem;
+        }
+
+        .json-header label {
+            margin: 0;
+        }
+
+        textarea {
+            height: 300px;
+            resize: vertical;
+            font-family: monospace;
+            font-size: .95rem;
+        }
+
+        button {
+            margin-top: 1rem;
+            padding: .75rem 1.5rem;
+            border: 0;
+            border-radius: 5px;
+            background: #222;
+            color: #fff;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .clear-button {
+            margin: 0;
+            padding: .4rem .8rem;
+            background: #666;
+        }
+
+        .delete-button {
+            background: #a00000;
+        }
+
+        #resultado,
+        #resultadoDelete {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #111;
+            color: #eee;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+
+<main>
+
+    <div class="panel">
+
+        <div class="section">
+
+            <label for="token">Token</label>
+
+            <input
+                type="password"
+                id="token"
+                autocomplete="off"
+                placeholder="Bearer token"
+            >
+
+        </div>
+
+        <div class="section">
+
+            <div class="json-header">
+                <label for="json">JSON del himno</label>
+
+                <button
+                    type="button"
+                    class="clear-button"
+                    id="limpiar"
+                >
+                    Limpiar JSON
+                </button>
+            </div>
+
+            <textarea id="json">{
+    "referencia": "125",
+    "titulo": "Santo, Santo, Santo",
+    "autor": "John Newton",
+    "tonalidad": "Sol mayor",
+    "tempo": 80,
+    "categorias": [
+        "adoracion",
+        "alabanza"
+    ],
+    "letra": "..."
+}</textarea>
+
+            <button id="enviar">
+                Enviar JSON
+            </button>
+
+            <div id="resultado"></div>
+
+        </div>
+
+        <div class="section">
+
+            <label for="deleteId">Eliminar himno por ID</label>
+
+            <input
+                type="text"
+                id="deleteId"
+                placeholder="Ej: himno053"
+            >
+
+            <button
+                type="button"
+                class="delete-button"
+                id="eliminar"
+            >
+                Eliminar himno
+            </button>
+
+            <div id="resultadoDelete"></div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+const jsonInput =
+    document.getElementById('json');
+
+const tokenInput =
+    document.getElementById('token');
+
+const enviarButton =
+    document.getElementById('enviar');
+
+const limpiarButton =
+    document.getElementById('limpiar');
+
+const resultado =
+    document.getElementById('resultado');
+
+const deleteIdInput =
+    document.getElementById('deleteId');
+
+const eliminarButton =
+    document.getElementById('eliminar');
+
+const resultadoDelete =
+    document.getElementById('resultadoDelete');
+
+const TOKEN_STORAGE_KEY =
+    'himnario_api_token';
+
+
+/*
+ * TOKEN
+ */
+
+const savedToken =
+    localStorage.getItem(TOKEN_STORAGE_KEY);
+
+if (savedToken) {
+    tokenInput.value = savedToken;
+}
+
+tokenInput.addEventListener('input', () => {
+
+    localStorage.setItem(
+        TOKEN_STORAGE_KEY,
+        tokenInput.value
+    );
+
+});
+
+
+/*
+ * LIMPIAR JSON
+ */
+
+limpiarButton.addEventListener('click', () => {
+
+    jsonInput.value = '';
+
+    resultado.style.display = 'none';
+    resultado.textContent = '';
+
+    jsonInput.focus();
+
+});
+
+
+/*
+ * CREAR / REEMPLAZAR HIMNO
+ */
+
+enviarButton.addEventListener('click', async () => {
+
+    resultado.style.display = 'block';
+    resultado.textContent = '';
+
+    let json;
+
+    try {
+
+        json = JSON.parse(jsonInput.value);
+
+    } catch (error) {
+
+        resultado.textContent =
+            'JSON inválido:\n' +
+            error.message;
+
+        return;
+    }
+
+    if (
+        typeof json !== 'object' ||
+        json === null ||
+        Array.isArray(json)
+    ) {
+
+        resultado.textContent =
+            'El JSON debe ser un objeto.';
+
+        return;
+    }
+
+    const token =
+        tokenInput.value.trim();
+
+    if (!token) {
+
+        resultado.textContent =
+            'Debe ingresar el token.';
+
+        return;
+    }
+
+    localStorage.setItem(
+        TOKEN_STORAGE_KEY,
+        token
+    );
+
+    enviarButton.disabled = true;
+
+    resultado.textContent =
+        'Enviando...';
+
+    try {
+
+        const response = await fetch(
+            '/api.php',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type':
+                        'application/json',
+
+                    'Authorization':
+                        'Bearer ' + token
+                },
+
+                body: JSON.stringify(json)
+            }
+        );
+
+        const text =
+            await response.text();
+
+        try {
+
+            const data =
+                JSON.parse(text);
+
+            resultado.textContent =
+                JSON.stringify(
+                    data,
+                    null,
+                    4
+                );
+
+        } catch {
+
+            resultado.textContent =
+                text;
+        }
+
+    } catch (error) {
+
+        resultado.textContent =
+            'Error de conexión:\n' +
+            error.message;
+
+    } finally {
+
+        enviarButton.disabled = false;
+    }
+
+});
+
+
+/*
+ * ELIMINAR HIMNO POR ID
+ */
+
+eliminarButton.addEventListener(
+    'click',
+    async () => {
+
+        resultadoDelete.style.display =
+            'block';
+
+        resultadoDelete.textContent =
+            '';
+
+        const token =
+            tokenInput.value.trim();
+
+        const id =
+            deleteIdInput.value.trim();
+
+        if (!token) {
+
+            resultadoDelete.textContent =
+                'Debe ingresar el token.';
+
+            return;
+        }
+
+        if (!id) {
+
+            resultadoDelete.textContent =
+                'Debe ingresar el ID del himno.';
+
+            return;
+        }
+
+        if (
+            !confirm(
+                `¿Eliminar el himno ${id}?`
+            )
+        ) {
+            return;
+        }
+
+        localStorage.setItem(
+            TOKEN_STORAGE_KEY,
+            token
+        );
+
+        eliminarButton.disabled = true;
+
+        resultadoDelete.textContent =
+            'Eliminando...';
+
+        try {
+
+            const response =
+                await fetch(
+                    '/api.php',
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json',
+
+                            'Authorization':
+                                'Bearer ' + token
+                        },
+
+                        body: JSON.stringify({
+                            action: 'delete',
+                            id: id
+                        })
+                    }
+                );
+
+            const text =
+                await response.text();
+
+            try {
+
+                const data =
+                    JSON.parse(text);
+
+                resultadoDelete.textContent =
+                    JSON.stringify(
+                        data,
+                        null,
+                        4
+                    );
+
+                if (data.ok) {
+
+                    deleteIdInput.value =
+                        '';
+                }
+
+            } catch {
+
+                resultadoDelete.textContent =
+                    text;
+            }
+
+        } catch (error) {
+
+            resultadoDelete.textContent =
+                'Error de conexión:\n' +
+                error.message;
+
+        } finally {
+
+            eliminarButton.disabled =
+                false;
+        }
+
+    }
+);
+</script>
+
+</body>
+</html>
