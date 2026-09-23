@@ -2,13 +2,10 @@
 
 declare(strict_types=1);
 
-putenv(
-    'GIT_SSH_COMMAND=ssh -F /dev/null -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
-);
-
 header('Content-Type: application/json; charset=utf-8');
 
-const TOKEN = '12344321$';
+$env = parse_ini_file(__DIR__ . "/.env");
+define("TOKEN", $env["TOKEN"] ?? "");
 
 const BASE_DIR = __DIR__;
 const DATA_DIR = BASE_DIR . '/data';
@@ -50,16 +47,6 @@ function ok(array $data, $lock = null): never
     );
 
     exit;
-}
-
-function run(string $cmd): array
-{
-    exec($cmd . ' 2>&1', $output, $code);
-
-    return [
-        'code' => $code,
-        'output' => trim(implode("\n", $output))
-    ];
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -106,6 +93,9 @@ if (!is_array($index)) {
     fail('Invalid index.json', 500, $lock);
 }
 
+/*
+ * ELIMINAR HIMNO POR ID
+ */
 if (($data['action'] ?? '') === 'delete') {
 
     $targetId = trim((string)($data['id'] ?? ''));
@@ -115,6 +105,7 @@ if (($data['action'] ?? '') === 'delete') {
     }
 
     $foundFile = null;
+    $foundReference = null;
 
     foreach ($index as $file) {
 
@@ -137,7 +128,10 @@ if (($data['action'] ?? '') === 'delete') {
         }
 
         if (($json['id'] ?? '') === $targetId) {
+
             $foundFile = $file;
+            $foundReference = $json['referencia'] ?? null;
+
             break;
         }
     }
@@ -180,27 +174,16 @@ if (($data['action'] ?? '') === 'delete') {
         fail('Cannot write index', 500, $lock);
     }
 
-    $commands = [
-        'git -C ' . escapeshellarg(BASE_DIR) . ' add -A',
-        'git -C ' . escapeshellarg(BASE_DIR) . ' commit -m ' . escapeshellarg("Eliminar {$targetId}"),
-        'git -C ' . escapeshellarg(BASE_DIR) . ' push origin main'
-    ];
-
-    foreach ($commands as $cmd) {
-
-        $result = run($cmd);
-
-        if ($result['code'] !== 0) {
-            fail('Git operation failed', 500, $lock);
-        }
-    }
-
     ok([
         'deleted' => $targetId,
+        'referencia' => $foundReference,
         'archivo' => $foundFile
     ], $lock);
 }
 
+/*
+ * AGREGAR / REEMPLAZAR HIMNO
+ */
 $required = [
     'titulo',
     'autor',
@@ -212,14 +195,101 @@ $required = [
 
 foreach ($required as $field) {
     if (!array_key_exists($field, $data)) {
-        fail("Missing field: {$field}");
+        fail("Missing field: {$field}", 400, $lock);
     }
 }
 
 if (!is_array($data['categorias'])) {
-    fail('categorias must be array');
+    fail('categorias must be array', 400, $lock);
 }
 
+/*
+ * Si viene un ID, buscar y reemplazar ese himno.
+ */
+$targetId = trim((string)($data['id'] ?? ''));
+
+if ($targetId !== '') {
+
+    $existingFile = null;
+
+    foreach ($index as $file) {
+
+        $path = HYMNS_DIR . '/' . $file;
+
+        if (!file_exists($path)) {
+            continue;
+        }
+
+        $content = file_get_contents($path);
+
+        if ($content === false) {
+            continue;
+        }
+
+        $json = json_decode($content, true);
+
+        if (!is_array($json)) {
+            continue;
+        }
+
+        if (($json['id'] ?? '') === $targetId) {
+            $existingFile = $file;
+            break;
+        }
+    }
+
+    if ($existingFile === null) {
+        fail('Hymn not found', 404, $lock);
+    }
+
+    $target = HYMNS_DIR . '/' . $existingFile;
+
+    $hymn = [
+        'id' => $targetId,
+        'referencia' => trim(
+            (string)($data['referencia'] ?? '')
+        ),
+        'titulo' => trim((string)$data['titulo']),
+        'autor' => trim((string)$data['autor']),
+        'tonalidad' => trim((string)$data['tonalidad']),
+        'tempo' => $data['tempo'],
+        'categorias' => array_values($data['categorias']),
+        'letra' => trim((string)$data['letra'])
+    ];
+
+    $hymnJson = json_encode(
+        $hymn,
+        JSON_PRETTY_PRINT |
+        JSON_UNESCAPED_UNICODE |
+        JSON_UNESCAPED_SLASHES
+    );
+
+    if ($hymnJson === false) {
+        fail('Cannot encode hymn JSON', 500, $lock);
+    }
+
+    $result = file_put_contents(
+        $target,
+        $hymnJson . PHP_EOL,
+        LOCK_EX
+    );
+
+    if ($result === false) {
+        fail('Cannot replace hymn', 500, $lock);
+    }
+
+    ok([
+        'accion' => 'replaced',
+        'id' => $targetId,
+        'referencia' => $hymn['referencia'],
+        'archivo' => $existingFile
+    ], $lock);
+}
+
+/*
+ * NO VIENE ID:
+ * Crear un nuevo himno.
+ */
 $numbers = [];
 
 foreach ($index as $file) {
@@ -236,13 +306,20 @@ $next = empty($numbers)
     ? 1
     : max($numbers) + 1;
 
-$padded = str_pad((string)$next, 3, '0', STR_PAD_LEFT);
+$padded = str_pad(
+    (string)$next,
+    3,
+    '0',
+    STR_PAD_LEFT
+);
 
 $filename = $padded . '.json';
 
 $hymn = [
     'id' => 'himno' . $padded,
-    'referencia' => trim((string)($data['referencia'] ?? (string)$next)),
+    'referencia' => trim(
+        (string)($data['referencia'] ?? (string)$next)
+    ),
     'titulo' => trim((string)$data['titulo']),
     'autor' => trim((string)$data['autor']),
     'tonalidad' => trim((string)$data['tonalidad']),
@@ -305,23 +382,8 @@ if ($result === false) {
     fail('Cannot write index', 500, $lock);
 }
 
-$commands = [
-    'git -C ' . escapeshellarg(BASE_DIR) . ' add data/index.json',
-    'git -C ' . escapeshellarg(BASE_DIR) . ' add ' . escapeshellarg('data/himnos/' . $filename),
-    'git -C ' . escapeshellarg(BASE_DIR) . ' commit -m ' . escapeshellarg("Agregar himno {$next}"),
-    'git -C ' . escapeshellarg(BASE_DIR) . ' push origin main'
-];
-
-foreach ($commands as $cmd) {
-
-    $result = run($cmd);
-
-    if ($result['code'] !== 0) {
-        fail('Git operation failed', 500, $lock);
-    }
-}
-
 ok([
+    'accion' => 'created',
     'archivo' => $filename,
     'id' => $hymn['id'],
     'referencia' => $hymn['referencia']
