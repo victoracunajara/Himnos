@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: himnario-php
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: himnario-php
+  template:
+    metadata:
+      labels:
+        app: himnario-php
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+
+      containers:
+        - name: php
+          image: ghcr.io/victoracunajara/himnario-php:v1
+
+          ports:
+            - containerPort: 9000
+
+          volumeMounts:
+            - name: data
+              mountPath: /var/www/html/data
+
+          env:
+            - name: TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: himnario-env
+                  key: TOKEN
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: himnario-data

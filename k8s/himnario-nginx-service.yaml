@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: himnario-nginx
+spec:
+  selector:
+    app: himnario-nginx
+  ports:
+    - port: 80
+      targetPort: 80

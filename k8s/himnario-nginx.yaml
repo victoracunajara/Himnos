@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: himnario-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: himnario-nginx
+  template:
+    metadata:
+      labels:
+        app: himnario-nginx
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+
+      containers:
+        - name: nginx
+          image: ghcr.io/victoracunajara/himnario-nginx:v1
+          ports:
+            - containerPort: 80
+
+          volumeMounts:
+            - name: data
+              mountPath: /var/www/html/data
+              readOnly: true
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: himnario-data

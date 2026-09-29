@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: himnario
+  annotations:
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+spec:
+  ingressClassName: traefik
+
+  tls:
+    - hosts:
+        - himnario.vops.cl
+        - himnos.vops.cl
+
+  rules:
+    - host: himnario.vops.cl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: himnario-nginx
+                port:
+                  number: 80
+
+    - host: himnos.vops.cl
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: himnario-nginx
+                port:
+                  number: 80
